@@ -1,6 +1,6 @@
 import java.util.Arrays;
 
-public class InsertSort {
+public class InsertionSort {
 
 
     public static void sort(int[] arr) {
