@@ -1,3 +1,6 @@
+import java.util.HashMap;
+import java.util.HashSet;
+
 public class XOR {
 
     // 一个数组中有一个数出现了奇数次，其余数都出现了偶数次，找到这个出现奇数次的数
@@ -86,12 +89,98 @@ public class XOR {
         return ans;
     }
 
-    // 对数器
+
+    /**
+     * 暴力测试对照用
+     */
+    public static int test(int[] arr, int k, int m) {
+        HashMap<Integer, Integer> count = new HashMap<>();
+        for (int j : arr) {
+            if (count.containsKey(j)) {
+                count.put(j, count.get(j) + 1);
+            } else {
+                count.put(j, 1);
+            }
+        }
+        for (int num : count.keySet()) {
+            if (count.get(num) == k) {
+                return num;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * 对数器
+     */
+    public static int[] arrayGenerate(int maxMLength, int k, int m, int valueMax) {
+
+        // 确定出现m次的个数
+        int mLength = (int) ((Math.random() * maxMLength) + 1);
+        // 确定数组长度
+        int[] arr = new int[m * mLength + k];
+        HashSet<Integer> values = new HashSet<>();
+        // 确定出现k次的数
+        int kNum = rangeIntGenerate(valueMax);
+        values.add(kNum);
+        int index = 0;
+        for (; index < k; index++) {
+            arr[index] = kNum;
+        }
+        // 确定每个出现k次的数
+        for (int i = 0; i < mLength; i++) {
+            int mNum;
+            do {
+                mNum = rangeIntGenerate(valueMax);
+            } while (values.contains(mNum));
+            values.add(mNum);
+            for (int j = 0; j < m; j++, index++) {
+                arr[index] = mNum;
+            }
+        }
+        return arr;
+    }
+
+    /**
+     * 返回给定范围的随机整数[-range,range]
+     *
+     * @param range 范围
+     * @return
+     */
+    public static int rangeIntGenerate(int range) {
+        return ((int) (Math.random() * range) + 1) - ((int) (Math.random() * range) + 1);
+    }
 
     public static void main(String[] args) {
+
+
         int[] arr = new int[]{0, 0, 2, 2, 2, 3, 3, 3, 4, 4, 4};
         int[] arr1 = new int[]{0, 0, 0, 0, 2, 2, 2, 3, 3, 3, 4, 4, 4};
         System.out.println(KM(arr, 2, 3));
         System.out.println(KM2(arr1, 2, 3));
+
+        int testTimes = 100000;
+        System.out.println("测试开始");
+
+        for (int i = 0; i < testTimes; i++) {
+
+            int maxM = 5;
+            int a = (int) (Math.random() * maxM) + 1; // a 1 ~ 9
+            int b = (int) (Math.random() * maxM) + 1; // b 1 ~ 9
+            // 确定k
+            int k = Math.min(a, b);
+            // 确定m
+            int m = Math.max(a, b);
+            // k < m
+            if (k == m) {
+                m++;
+            }
+            int[] ints = arrayGenerate(5, k, m, 8);
+            if (KM2(ints, k, m) != test(ints, k, m)) {
+                System.out.println("测试失败");
+            }
+        }
+        System.out.println("测试结束");
+
     }
 }
